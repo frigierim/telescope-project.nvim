@@ -19,7 +19,6 @@ M.project_finder = function(opts, projects)
   -- each of the keys
   for _, project in pairs(projects) do
 
-    print(vim.inspect(project))
     local branch = _git.try_and_find_git_branch(project.path) or ""
     if display_type == 'full' then
       project.display_path = '[' .. project.path .. '] <' .. branch .. '>'
