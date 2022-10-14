@@ -65,4 +65,15 @@ M.try_and_find_git_path = function()
   return git_root
 end
 
+M.try_and_find_git_branch = function(path)
+  local git_cmd = "git --git-dir=" .. path .. ".git branch --show-current"
+  local git_branch = tostring(vim.fn.systemlist(git_cmd)[1]):gsub(".*","")
+  local git_root_fatal = _utils.string_starts_with(git_branch, 'fatal')
+
+  if not git_branch or git_root_fatal then
+    return  nil
+  end
+  return git_branch
+end
+
 return M

@@ -2,6 +2,7 @@ local finders = require("telescope.finders")
 local Path = require('plenary.path')
 local strings = require("plenary.strings")
 local entry_display = require("telescope.pickers.entry_display")
+local _git = require("telescope._extensions.project.git")
 
 local M = {}
 
@@ -17,10 +18,11 @@ M.project_finder = function(opts, projects)
   -- Loop over all of the projects and find the maximum length of
   -- each of the keys
   for _, project in pairs(projects) do
+    local branch = _git.try_and_find_git_branch(project.path) or ""
     if display_type == 'full' then
-      project.display_path = '[' .. project.path .. ']'
+      project.display_path = '[' .. project.path .. '] <' .. branch .. '>'
     else
-      project.display_path = ''
+      project.display_path = '<' .. branch .. '>'
     end
     local project_path_exists = Path:new(project.path):exists()
     if not project_path_exists then
