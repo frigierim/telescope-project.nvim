@@ -2,6 +2,7 @@ local _utils = require("telescope._extensions.project.utils")
 local iter = require("plenary.iterators")
 local path = require("plenary.path")
 local scan = require("plenary.scandir")
+local _path = require("plenary.path")
 
 local M = {}
 
@@ -65,8 +66,13 @@ M.try_and_find_git_path = function()
   return git_root
 end
 
-M.try_and_find_git_branch = function(path)
-  local git_cmd = "git --git-dir=" .. path .. ".git branch --show-current"
+M.try_and_find_git_branch = function(path_str)
+
+  local current_path = _path:new(path_str)
+  local normalized_path = current_path:normalize()
+  local final_path = string.gsub(normalized_path, "/", _path.path.sep)
+  print(vim.inspect(final_path)) 
+  local git_cmd = "git --git-dir=" .. final_path .. _path.path.sep .. ".git branch --show-current"
   local git_branch = tostring(vim.fn.systemlist(git_cmd)[1]):gsub(".*","")
   local git_root_fatal = _utils.string_starts_with(git_branch, 'fatal')
 
