@@ -22,6 +22,8 @@ M.project_finder = function(opts, projects)
     local branch = _git.try_and_find_git_branch(project.path) or ""
     if display_type == 'full' then
       project.display_path = '[' .. project.path .. '] <' .. branch .. '>'
+    elseif display_type == 'two-segment' then
+      project.display_path = '[' .. string.match(project.path, '([^/]+/[^/]+)/?$') .. ']'
     else
       project.display_path = '<' .. branch .. '>'
     end
