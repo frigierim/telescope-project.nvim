@@ -68,24 +68,20 @@ end
 
 M.try_and_find_git_branch = function(path_str)
 
-  local current_path = _path:new(path_str)
-  local normalized_path = current_path:normalize()
-  local final_path = string.gsub(normalized_path, "/", _path.path.sep)
-
   -- Handle worktree: if final_path is a file, then the actual final_path is the string inside it
   local Path = require("plenary.path")
-  local path_check =  Path:new(final_path)
+  local path_check =  Path:new(path_str)
   if path_check:exists() then
       if not path_check:is_dir() then
-          local file = io.open(final_path, "r")
+          local file = io.open(path_str, "r")
           if file then
-              final_path = file:read("*a") -- Read the entire file
+              path_str = file:read("*a") -- Read the entire file
               file:close()
           end
       end
   end
 
-  local git_cmd = "git --git-dir=" .. final_path .. _path.path.sep .. ".git branch --show-current"
+  local git_cmd = "git --git-dir=" .. path_str .. _path.path.sep .. ".git branch --show-current"
   local git_branch = tostring(vim.fn.systemlist(git_cmd)[1] or "")
   git_branch = git_branch:gsub(".*","")
   local git_root_fatal = _utils.string_starts_with(git_branch, 'fatal')
@@ -95,7 +91,7 @@ M.try_and_find_git_branch = function(path_str)
   end
 
   if git_branch == "" then
-    git_cmd = "git --git-dir=" .. final_path .. _path.path.sep .. ".git rev-parse --short HEAD"
+    git_cmd = "git --git-dir=" .. path_str .. _path.path.sep .. ".git rev-parse --short HEAD"
     local sha_id = tostring(vim.fn.systemlist(git_cmd)[1] or "")
     git_root_fatal = _utils.string_starts_with(sha_id, 'fatal')
     if git_root_fatal then
