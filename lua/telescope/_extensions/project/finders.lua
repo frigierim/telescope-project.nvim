@@ -24,7 +24,11 @@ M.project_finder = function(opts, projects)
     elseif display_type == 'two-segment' then
       project.display_path = '[' .. string.match(project.path, '([^/]+/[^/]+)/?$') .. ']'
     else
-      project.display_path = '<' .. branch .. '>'
+     if branch == "" then
+        project.display_path = ""
+     else
+        project.display_path = '<' .. branch .. '>'
+      end
     end
     local project_path_exists = Path:new(project.path):exists()
     if not project_path_exists then
